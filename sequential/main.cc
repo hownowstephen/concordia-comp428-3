@@ -1,12 +1,4 @@
-#include <iostream>
-#include <algorithm>
-using namespace std;
-
-// Define a constant for infinity
-#define INFINITY 99999
-
 /**
- *
  * Sequential implementation of Floyds all-pairs shortest path algorithm
  *
  * Resources used in development:
@@ -18,19 +10,39 @@ using namespace std;
  *
  */
 
+#include <iostream>
+#include <algorithm>
+#include <sys/time.h>
+using namespace std;
+
+// Define a constant for infinity
+#define INFINITY 99999
 
 /**
- * FloydsAlgorithm
+ * GetClock
+ * Used for benchmarking performance
+ */
+double getClock()
+{
+    struct timeval tp;
+    struct timezone tzp;
+
+    gettimeofday(&tp, &tzp);
+
+    return (double)tp.tv_sec+((double)tp.tv_usec/1000000.0);
+}
+
+/**
+ * FloydsAlgorithm (sequential)
  * Performs a test of an adjacency matrix (2-dimensional represented as single dimension)
  * to find the shortest distance between two nodes on the directed graph
+ * @param int* data A square adjacency matrix
+ * @param int N Size of a single dimension of the matrix
  */
 void FloydsAlgorithm(int *data, int N){
 
 	int k,i,j;
 	int ij,ik,kj;
-
-	// Output will be same size as data
-	int out[N*N];
 
 	// Maximum path length is N so we iterate N times
 	for(k=0; k<N; k++){
@@ -52,7 +64,6 @@ void FloydsAlgorithm(int *data, int N){
 					// If our data is smaller, replace it and set the output to be the current path length
 					if(data[ik]+data[kj]< data[ij]){
 						data[ij] = data[ik]+data[kj];
-						out[ij] = k;
 					}
 				}
 			}
