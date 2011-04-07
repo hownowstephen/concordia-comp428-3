@@ -61,7 +61,7 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 		if (k >= start && k < start+count) {
 			k_here = k - start;
 			for(j=0;j<N;j++)
-				rowk[j]=data[k_here][j];
+				rowk[j]=data[k_here*N + j];
 		}
 
 		//MPI_Bcast(&k, 1, MPI_INT, 0, MPI_Comm_World);
