@@ -97,6 +97,8 @@ void Server(int size){
 					1, 0, 1, 0
 				  };
 
+	cout << "Initializing Floyd's Algorithm";
+
 	// Broadcast out the matrix width/height
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 	// Broadcast out the matrix contents
