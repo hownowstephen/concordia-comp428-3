@@ -85,7 +85,7 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 
 	if(rank != 0){
 		cout << "sending final result from " << rank << endl;
-		MPI_Send(data,N*N,MPI_INT,0,rank,MPI_COMM_WORLD);
+		MPI_Send(data,N*N,MPI_INT,0,0,MPI_COMM_WORLD);
 	}
 }
 
@@ -112,10 +112,10 @@ void Server(int size){
 
 	cout << "Combining responses" << endl;
 	int tmp[N*N];
-	for(int p=1;p<size;++p){
-		MPI_Recv(tmp, N*N, MPI_INT, p, p, MPI_COMM_WORLD,status);
+	for(int p=1;p<size;p++){
+		MPI_Recv(tmp, N*N, MPI_INT, p, 0, MPI_COMM_WORLD,status);
 		cout << "Got response from " << p << endl;
-		for(int v=0;v<N*N;++v){
+		for(int v=0;v<N*N;v++){
 			data[v] = data[v] + tmp[v];
 		}
 	}
