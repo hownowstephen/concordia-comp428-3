@@ -115,22 +115,15 @@ void Slave(int rank,int S){
 	// Receive the matrix
 	MPI_Bcast (&data, size, MPI_INT, 0, MPI_COMM_WORLD);
 
-	int index;
-	for(int i=0;i<N;i++){
-		for (int j=0;j<N;j++){
-			index = i*N+j;
-			cout << data[index] << ' ';
-		}
-		cout << endl;
-	}
-
 	// Calculate start and count
 	int count = (int) ceil(num/S);
 	int start = rank * count;
 	if((num * start) + (num * count) > size) count = N - start;
 
-	FloydsAlgorithm(data,num);
+	cout << "Process " << rank << "(" << start << "," << count << ")" << endl;
 
+	FloydsAlgorithm(data,num);
+	exit;
 	for(int i=0;i<N;i++){
 		for (int j=0;j<N;j++){
 			index = i*N+j;
