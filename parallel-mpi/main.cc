@@ -83,9 +83,9 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 	}
 	// Populate the output
 	int c = 0;
-	for(int i=start;i<start+count;i++){
-		for(int j=0;j<N;j++){
-			out[c] = data[i*N + j];
+	for(int j=0;j<N;j++){
+		for(int i=start;i<start+count;i++){
+			out[c] = data[j*N + i];
 			cout << out[c] << " ";
 			c++;
 		}
