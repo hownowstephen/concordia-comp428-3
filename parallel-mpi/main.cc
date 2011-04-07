@@ -175,9 +175,11 @@ int main(int argc, char * argv[]){
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Get_processor_name(name, &len);
 
+	char * file;
+
 	// Take a filename as a param
 	if(argc > 1){
-		char * file = argv[1];
+		 file = argv[1];
 	}else{
 		cout << "Please supply a filename" << endl;
 		MPI_Finalize();
