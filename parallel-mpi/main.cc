@@ -125,7 +125,7 @@ void Server(int size){
 		MPI_Recv(&t, total, MPI_INT, p, 0, MPI_COMM_WORLD,&status);
 		cout << "Got response from " << p << endl;
 		for(int v=0;v<total;v++){
-			data[v] = data[v]+t[v];
+			data[v] = max(data[v],t[v]);
 		}
 	}
 
