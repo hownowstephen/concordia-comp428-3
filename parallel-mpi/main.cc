@@ -111,7 +111,7 @@ void Server(int size){
 
 	FloydsAlgorithm(0,data,N,0,count);
 
-	cout << "Combining responses" << endl;
+	/*cout << "Combining responses" << endl;
 	int tmp[total];
 	for(int p=1;p<size;p++){
 		MPI_Recv(&tmp, total, MPI_INT, p, 0, MPI_COMM_WORLD,&status);
@@ -119,7 +119,7 @@ void Server(int size){
 		for(int v=0;v<total;v++){
 			data[v] = data[v] + tmp[v];
 		}
-	}
+	}*/
 
 	int index;
 	for(int i=0;i<N;i++){
