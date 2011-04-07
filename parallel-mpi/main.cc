@@ -132,8 +132,8 @@ void Slave(int rank,int S){
 	cout << "Size: " << num << "^2: " << size << endl;
 	// Calculate start and count
 	int count = (int) ceil(num/S);
-	int start = (rank) * (num * count);
-	if((start + num * count) > size) count = size - start;
+	int start = rank * count;
+	if((num * start) + (num * count) > size) count = N - start;
 
 	cout << "Process " << rank << " performing floyd's algo for " << count << " from " << start << endl;
 	FloydsAlgorithm(data,num,start,count);
