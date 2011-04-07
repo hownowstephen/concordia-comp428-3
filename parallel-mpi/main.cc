@@ -51,8 +51,6 @@ double getClock()
  */
 void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 
-	cout << "Performing floyds algorithm for matrix of size " << N << endl;
-	cout << "Start " << start << " count " << count << endl;
 	int k,i,j,k_here;
 	int ij,ik;
 
@@ -119,11 +117,9 @@ void Server(int size){
 
 	FloydsAlgorithm(0,data,N,0,count);
 
-	cout << "Combining responses" << endl;
 	int t[total];
 	for(int p=1;p<size;p++){
 		MPI_Recv(&t, total, MPI_INT, p, 0, MPI_COMM_WORLD,&status);
-		cout << "Got response from " << p << endl;
 		for(int v=0;v<total;v++){
 			data[v] = max(data[v],t[v]);
 		}
@@ -186,7 +182,11 @@ int main(int argc, char * argv[]){
 	MPI_Get_processor_name(name, &len);
 
 	if (rank == 0)
-	{  Server(size); }
+	{
+		double startTime = getClock();
+		Server(size);
+		cout << "Time: "<< getClock() - startTime << endl;
+	}
 	else
 	{  Slave(rank,size); }
 	MPI_Finalize();
