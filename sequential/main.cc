@@ -82,13 +82,12 @@ void FloydsAlgorithm(int *data, int N){
  *		1 2 1 0
  */
 int main(void){
-	int N = 5;
+	int N = 4;
 	/** @var sample A sample adjacency matrix */
-	int data[25]= { 0, 1, 0, 0, 0,
-					0, 0, 1, 1, 0,
-					0, 0, 0, 0, 0,
-					1, 0, 1, 0, 1,
-					0, 1, 1, 1, 0
+	int data[16]= { 0, 1, 0, 0,
+					0, 0, 1, 1,
+					0, 0, 0, 0,
+					1, 0, 1, 0,
 				  };
 	// Perform the actual calculation (simple is passed by reference, so no return)
 	FloydsAlgorithm(data,4);

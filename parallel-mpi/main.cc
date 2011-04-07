@@ -20,8 +20,6 @@ using namespace std;
 
 char name[MPI_MAX_PROCESSOR_NAME];
 
-// Define a constant for infinity
-#define FLOYDINF 999999
 
 /**
  * GetClock
@@ -42,42 +40,45 @@ double getClock()
  * FloydsAlgorithm (parallelized)
  * Performs a test of an adjacency matrix (2-dimensional represented as single dimension)
  * to find the shortest distance between two nodes on the directed graph
+ * @param int rank The rank of the current process
  * @param int* data A square adjacency matrix
  * @param int N Size of a single dimension of the matrix
  * @param int i The row to test
  */
-void FloydsAlgorithm(int *data, int N, int start, int count){
+void FloydsAlgorithm(int rank, sint *data, int N, int start, int count){
 
 	cout << "Performing floyds algorithm for matrix of size " << N << endl;
 	int k,i,j;
-	int ij,ik,kj;
+	int ij,ik;
 
-	// Maximum path length is N so we iterate N times
-	for(k=start; k<start+count; k++){
-		// Test rows
-		for(i=0; i<N; i++){
-			// Test columns
-			for (j=0; j<N; j++){
-				// Resolve some indices
+	int rowk[N];
+
+	for (k=0;k<N;k++) {
+		// Check if k is owned by this process, if so, calculate the row
+		if (k >= start && k < start+count) {
+			k_here = k - start;
+			for(j=0;j<n;j++)
+				rowk[j]=a[k_here][j];
+		}
+
+		//MPI_Bcast(&k, 1, MPI_INT, 0, MPI_Comm_World);
+		MPI_Bcast(rowk,N,MPI_INT,rank,MPI_COMM_WORLD);
+
+		for(i=start;i<start+count;i++){
+			for(j=0;j<N;j++){
+
 				ij = i * N + j;
 				ik = i * N + k;
 				kj = k * N + j;
 
-				// If i == j, the nodes are the same, so the distance is zero
-				if(i==j){
-					data[ij] = 0;
-				}else{
-					// Use an arbitrarily large number to test against
-					if(data[ij] == 0) data[ij] = FLOYDINF;
-					// If our data is smaller, replace it and set the output to be the current path length
-					if(data[ik]+data[kj]< data[ij]){
-						data[ij] = data[ik]+data[kj];
-					}
-				}
+				if(data[ij] == 0) data[ij] = INFINITY;
+				if(i == j) data[ij] = 0;
+				data[ij]= min(data[ij], data[ik]+rowk[j]);
 			}
 		}
 	}
-	if(start == 1){
+
+	if(start == 0){
 		int index;
 		for(int i=0;i<N;i++){
 			for (int j=0;j<N;j++){
@@ -96,13 +97,12 @@ void Server(int size){
 	// Perform dispatch of all requests
 	// Need to: Broadcast data, send each process a start/count pair for their requirements
 
-	int N = 5;
+	int N = 4;
 	/** @var sample A sample adjacency matrix */
-	int data[25]= { 0, 1, 0, 0, 0,
-					0, 0, 1, 1, 0,
-					0, 0, 0, 0, 0,
-					1, 0, 1, 0, 1,
-					0, 1, 1, 1, 0
+	int data[16]= { 0, 1, 0, 0,
+					0, 0, 1, 1,
+					0, 0, 0, 0,
+					1, 0, 1, 0,
 				  };
 	// Broadcast out the matrix width/height
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -112,7 +112,7 @@ void Server(int size){
 	int count = (int) ceil(N/size);
 	int start = N;
 
-	FloydsAlgorithm(data,N,0,count);
+	FloydsAlgorithm(0,data,N,0,count);
 }
 // Slave process - receives a request, performs floyd's algorithm, and returns a subset of the data
 void Slave(int rank,int S){
@@ -136,7 +136,7 @@ void Slave(int rank,int S){
 
 	cout << "Process " << rank << "(" << start << "," << count << ")" << endl;
 
-	FloydsAlgorithm(data,num,start,count);
+	FloydsAlgorithm(rank,data,num,start,count);
 
 	// Total number of individual items processed
 	int total = num * count;
