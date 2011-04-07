@@ -96,12 +96,13 @@ void Server(int size){
 	// Perform dispatch of all requests
 	// Need to: Broadcast data, send each process a start/count pair for their requirements
 
-	int N = 4;
+	int N = 5;
 	/** @var sample A sample adjacency matrix */
-	int data[16]= { 0, 1, 0, 0,
-					0, 0, 1, 1,
-					0, 0, 0, 0,
-					1, 0, 1, 0
+	int data[25]= { 0, 1, 0, 0, 0,
+					0, 0, 1, 1, 0,
+					0, 0, 0, 0, 0,
+					1, 0, 1, 0, 1,
+					0, 1, 1, 1, 0
 				  };
 	// Broadcast out the matrix width/height
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);

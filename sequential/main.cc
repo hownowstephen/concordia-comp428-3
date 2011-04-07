@@ -82,15 +82,16 @@ void FloydsAlgorithm(int *data, int N){
  *		1 2 1 0
  */
 int main(void){
-	int N = 4;
+	int N = 5;
 	/** @var sample A sample adjacency matrix */
-	int sample[16]= {   0, 1, 0, 0,
-						0, 0, 1, 1,
-						0, 0, 0, 0,
-						1, 0, 1, 0
-					  };
+	int data[25]= { 0, 1, 0, 0, 0,
+					0, 0, 1, 1, 0,
+					0, 0, 0, 0, 0,
+					1, 0, 1, 0, 1,
+					0, 1, 1, 1, 0
+				  };
 	// Perform the actual calculation (simple is passed by reference, so no return)
-	FloydsAlgorithm(sample,4);
+	FloydsAlgorithm(data,4);
 
 	// Print out the new matrix with the returned results
 	int index;
@@ -98,10 +99,10 @@ int main(void){
 		for (int j=0;j<N;j++){
 			index = i*N+j;
 			// Convert INFINITY values back to zero
-			if(sample[index] == INFINITY)
+			if(data[index] == INFINITY)
 				cout << 0 << ' ';
 			else
-				cout << sample[index] << ' ';
+				cout << data[index] << ' ';
 		}
 		cout << endl;
 	}
