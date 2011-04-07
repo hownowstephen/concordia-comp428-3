@@ -166,6 +166,8 @@ int main(int argc, char * argv[]){
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Get_processor_name(name, &len);
 
+	cout << "Rank " << rank << " checking in" << endl;
+
 	if (rank == SERVER)
 	{  Server(size); }
 	else
