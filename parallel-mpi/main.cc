@@ -46,25 +46,15 @@ double getClock()
  * @param int N Size of a single dimension of the matrix
  * @param int i The row to test
  */
-void FloydsAlgorithm(int *data, int N, int start, int count){
+void FloydsAlgorithm(int *data, int N){
 
-	int k,j,i;
+	int k,i,j;
 	int ij,ik,kj;
-
-	int * out = new int[N*count];
-
-	// output
-	for(int i=0;i<N;i++){
-		for(int j=0;j<N;j++){
-				cout << data[i*N + j] << " ";
-		}
-		cout << endl;
-	}
 
 	// Maximum path length is N so we iterate N times
 	for(k=0; k<N; k++){
-		// Process the set of columns indicated
-		for(i=0;i<N;i++){
+		// Test rows
+		for(i=0; i<N; i++){
 			// Test columns
 			for (j=0; j<N; j++){
 				// Resolve some indices
@@ -77,23 +67,14 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 					data[ij] = 0;
 				}else{
 					// Use an arbitrarily large number to test against
-					if(data[ij] == 0) data[ij] = FLOYDINF;
+					if(data[ij] == 0) data[ij] = INFINITY;
 					// If our data is smaller, replace it and set the output to be the current path length
 					if(data[ik]+data[kj]< data[ij]){
 						data[ij] = data[ik]+data[kj];
-						// Only need index j
-						out[j] = k;
 					}
 				}
 			}
 		}
-	}
-	// output
-	for(int i=0;i<N;i++){
-		for(int j=0;j<N;j++){
-				cout << data[i*N + j] << " ";
-		}
-		cout << endl;
 	}
 }
 
@@ -116,7 +97,7 @@ void Server(int size){
 	int count = (int) ceil(N/size);
 	int start = N;
 
-	FloydsAlgorithm(data,N*N,0,count);
+	FloydsAlgorithm(data,N*N);
 }
 // Slave process - receives a request, performs floyd's algorithm, and returns a subset of the data
 void Slave(int rank,int S){
@@ -132,6 +113,15 @@ void Slave(int rank,int S){
 	// Receive the matrix
 	MPI_Bcast (&data, size, MPI_INT, 0, MPI_COMM_WORLD);
 
+	int index;
+	for(int i=0;i<N;i++){
+		for (int j=0;j<N;j++){
+			index = i*N+j;
+			cout << data[index] << ' ';
+		}
+		cout << endl;
+	}
+
 	int num = sqrt(size);
 
 	// Calculate start and count
@@ -139,7 +129,7 @@ void Slave(int rank,int S){
 	int start = rank * count;
 	if((num * start) + (num * count) > size) count = N - start;
 
-	FloydsAlgorithm(data,num,start,count);
+	FloydsAlgorithm(data,num);
 
 	// Total number of individual items processed
 	int total = num * count;
