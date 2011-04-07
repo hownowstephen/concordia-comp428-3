@@ -51,8 +51,13 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 	int k,j,i;
 	int ij,ik,kj;
 
-	// Output will be same size as data
-	int out[N];
+	// output
+	for(int i=0;i<N;i++){
+		for(int j=0;j<N;j++){
+				cout << data[i*N + j] << " ";
+		}
+		cout << endl;
+	}
 
 	// Maximum path length is N so we iterate N times
 	for(k=0; k<N; k++){
@@ -81,8 +86,7 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 			}
 		}
 	}
-	// Populate the output
-	int c = 0;
+	// output
 	for(int i=0;i<N;i++){
 		for(int j=0;j<N;j++){
 				cout << data[i*N + j] << " ";
