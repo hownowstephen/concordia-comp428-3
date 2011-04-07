@@ -59,12 +59,11 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 
 	for (k=0;k<N;k++) {
 
-		int owner = (int) ceil(k/count);
+		int owner = (int) floor(k/count);
 		// Check if k is owned by this process, if so, calculate the row
 		if (rank == owner) {
-			k_here = k;// - start;
 			for(j=0;j<N;j++)
-				rowk[j]=data[k_here*N + j];
+				rowk[j]=data[k*N + j];
 		}
 
 		MPI_Bcast(&k, 1, MPI_INT, owner, MPI_COMM_WORLD);
@@ -76,9 +75,12 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 				ij = i * N + j;
 				ik = i * N + k;
 
-				if(i == j) data[ij] = SMINF;
-				if(data[ij] == 0) data[ij] = SMINF;
-				data[ij]= min(data[ij], data[ik]+rowk[j]);
+				if(i == j){
+					data[ij] = 0;
+				}else{
+					if(data[ij] == 0) data[ij] = SMINF;
+					data[ij]= min(data[ij], data[ik]+rowk[j]);
+				}
 			}
 		}
 	}
