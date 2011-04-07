@@ -92,7 +92,7 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 void Server(int size){
 	// Perform dispatch of all requests
 	// Need to: Broadcast data, send each process a start/count pair for their requirements
-	MPI_Status *status;
+	MPI_Status status;
 	int N = 4;
 	/** @var sample A sample adjacency matrix */
 	int data[16]= { 0, 1, 0, 0,
