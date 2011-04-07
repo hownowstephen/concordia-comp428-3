@@ -51,6 +51,8 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 	int k,j,i;
 	int ij,ik,kj;
 
+	int * out = new int[N*count];
+
 	// output
 	for(int i=0;i<N;i++){
 		for(int j=0;j<N;j++){
