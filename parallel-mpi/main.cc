@@ -95,7 +95,7 @@ void Server(int size){
 
 	FILE *I_in;
 	// Load the mask
-	ifstream M_in("Adjacency.mtx", ios::in);
+	ifstream M_in("../Adjacency.mtx", ios::in);
 	int N,tmp;
 	M_in >> N;
 
