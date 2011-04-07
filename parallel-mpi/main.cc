@@ -77,7 +77,7 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 			}
 		}
 	}
-	if(start == 0){
+	if(start == 1){
 		int index;
 		for(int i=0;i<N;i++){
 			for (int j=0;j<N;j++){
