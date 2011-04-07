@@ -83,19 +83,7 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 		}
 	}
 
-	if(rank == 3){
-		int index;
-		for(int i=0;i<N;i++){
-			for (int j=0;j<N;j++){
-				index = i*N+j;
-				if(data[index] == SMINF)
-					cout << 0 << ' ';
-				else
-					cout << data[index] << ' ';
-			}
-			cout << endl;
-		}
-	}
+	MPI_Bcast(data,N*N,MPI_INT,rank,MPI_COMM_WORLD);
 }
 
 void Server(int size){
@@ -118,6 +106,26 @@ void Server(int size){
 	int start = N;
 
 	FloydsAlgorithm(0,data,N,0,count);
+
+	int tmp[N*N];
+	for(int p=1;p<size;p++){
+		MPI_Bcast(tmp, N*N, MPI_INT, p, MPI_COMM_WORLD);
+		for(int v=0;v<N*N;v++){
+			data[v] = data[v] + tmp[v];
+		}
+	}
+
+	int index;
+	for(int i=0;i<N;i++){
+		for (int j=0;j<N;j++){
+			index = i*N+j;
+			if(data[index] == SMINF)
+				cout << 0 << ' ';
+			else
+				cout << data[index] << ' ';
+		}
+		cout << endl;
+	}
 }
 // Slave process - receives a request, performs floyd's algorithm, and returns a subset of the data
 void Slave(int rank,int S){
