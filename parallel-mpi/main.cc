@@ -95,8 +95,6 @@ void Server(int size){
 					1, 0, 1, 0
 				  };
 
-	cout << "Server process" << endl;
-
 	// Broadcast out the matrix width/height
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 	// Broadcast out the matrix contents
@@ -107,7 +105,6 @@ void Server(int size){
 
 	// Send directives to each processor of what to process
 	for (int dest = 1; dest < size; ++dest){
-		cout << "Sending data to process " << dest << endl;
 		MPI_Send (&start, 1, MPI_INT, dest, 0, MPI_COMM_WORLD);
 		MPI_Send (&count, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
 		start += count;
@@ -123,8 +120,6 @@ void Slave(int rank){
 	int N,start,count;
 	MPI_Status status;
 
-	cout << "Slave process: " << rank << endl;
-
 	// Receive broadcast of N (the width/height of the matrix)
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 	int * data = new int[N*N];
@@ -135,6 +130,7 @@ void Slave(int rank){
 	MPI_Recv (&start, 1, MPI_INT, 0, 0, MPI_COMM_WORLD,&status);
 	MPI_Recv (&count, 1, MPI_INT, 0, 1, MPI_COMM_WORLD,&status);
 
+	cout << "Process " << rank << " performing floyd's algo for " << count << " from " << start << endl;
 	FloydsAlgorithm(data,N,start,count);
 
 	// Total number of individual items processed
