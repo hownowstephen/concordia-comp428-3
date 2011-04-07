@@ -124,6 +124,7 @@ void Slave(int rank,int S){
 
 	FloydsAlgorithm(data,num);
 	exit;
+	int index;
 	for(int i=0;i<N;i++){
 		for (int j=0;j<N;j++){
 			index = i*N+j;
