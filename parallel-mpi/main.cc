@@ -102,7 +102,18 @@ void Server(int size,char * file){
 			   M_in >> tmp;
 			   data[y*N + x] = tmp;
 		}
-
+	// Finally, print the result
+		int index;
+		for(int i=0;i<N;i++){
+			for (int j=0;j<N;j++){
+				index = i*N+j;
+				if(data[index] == SMINF)
+					cout << 0 << ' ';
+				else
+					cout << data[index] << ' ';
+			}
+			cout << endl;
+		}
 	// Broadcast out the matrix width/height
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 	// Broadcast out the matrix contents
