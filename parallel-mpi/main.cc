@@ -14,6 +14,7 @@
 #include <iostream>
 #include <algorithm>
 #include <mpi.h>
+#include <math.h>
 #include <sys/time.h>
 using namespace std;
 
@@ -97,7 +98,7 @@ void Server(int size){
 				  };
 
 	// Broadcast out the matrix width/height
-	MPI_Bcast (N, 1, MPI_INT, 0, MPI_COMM_WORLD);
+	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 	// Broadcast out the matrix contents
 	MPI_Bcast (data, N*N, MPI_INT, 0, MPI_COMM_WORLD);
 
@@ -105,7 +106,7 @@ void Server(int size){
 	int start = N;
 
 	// Send directives to each processor of what to process
-	for (dest = 1; dest < size; ++dest){
+	for (int dest = 1; dest < size; ++dest){
 		MPI_Send (&start, 1, MPI_INT, dest, 0, MPI_COMM_WORLD);
 		MPI_Send (&count, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
 		start += count;
@@ -119,6 +120,7 @@ void Server(int size){
 // Slave process - receives a request, performs floyd's algorithm, and returns a subset of the data
 void Slave(int rank){
 	int N,start,count;
+	MPI_Status status;
 
 	// Receive broadcast of N (the width/height of the matrix)
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -127,8 +129,8 @@ void Slave(int rank){
 	MPI_Bcast (&data, N, MPI_INT, 0, MPI_COMM_WORLD);
 
 	// Receive directives for processing
-	MPI_Recv (&start, 1, MPI_INT, rank, 0, MPI_COMM_WORLD);
-	MPI_Recv (&count, 1, MPI_INT, rank, 1, MPI_COMM_WORLD);
+	MPI_Recv (&start, 1, MPI_INT, rank, 0, MPI_COMM_WORLD,&status);
+	MPI_Recv (&count, 1, MPI_INT, rank, 1, MPI_COMM_WORLD,&status);
 
 	FloydsAlgorithm(data,N,start,count);
 
@@ -145,7 +147,7 @@ void Slave(int rank){
 		}
 		cout << endl;
 	}
-	MPI_Send(&out, total, SERVER, rank, MPI_COMM_WORLD);
+	MPI_Send(&out, total, MPI_INT, SERVER, rank, MPI_COMM_WORLD);
 }
 
 /**
@@ -155,7 +157,7 @@ void Slave(int rank){
  * The server will also act as a slave to ensure that all the processors are
  * busy.
  */
-int main(void){
+int main(int argc, char * argv[]){
 	int size, rank, len;
 	MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
