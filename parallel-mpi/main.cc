@@ -48,6 +48,7 @@ double getClock()
  */
 void FloydsAlgorithm(int *data, int N){
 
+	cout << "Performing floyds algorithm for matrix of size " << N << endl;
 	int k,i,j;
 	int ij,ik,kj;
 
@@ -107,6 +108,7 @@ void Slave(int rank,int S){
 	// Receive broadcast of N (the width/height of the matrix)
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
+	int num = N;
 	int size = N * N;
 	int data[size];
 
@@ -121,16 +123,21 @@ void Slave(int rank,int S){
 		}
 		cout << endl;
 	}
-	exit;
-
-	int num = sqrt(size);
-
 	// Calculate start and count
 	int count = (int) ceil(num/S);
 	int start = rank * count;
 	if((num * start) + (num * count) > size) count = N - start;
 
 	FloydsAlgorithm(data,num);
+
+	int index;
+	for(int i=0;i<N;i++){
+		for (int j=0;j<N;j++){
+			index = i*N+j;
+			cout << data[index] << ' ';
+		}
+		cout << endl;
+	}
 
 	// Total number of individual items processed
 	int total = num * count;
