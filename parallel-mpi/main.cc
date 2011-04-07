@@ -115,7 +115,7 @@ void Server(int size){
 	FloydsAlgorithm(data,N,0,ceil(N/size));
 }
 // Slave process - receives a request, performs floyd's algorithm, and returns a subset of the data
-void Slave(int rank,int total){
+void Slave(int rank,int S){
 	int N;
 	MPI_Status status;
 
@@ -129,7 +129,7 @@ void Slave(int rank,int total){
 	MPI_Bcast (&data, size, MPI_INT, 0, MPI_COMM_WORLD);
 
 	// Calculate start and count
-	int count = ceil(N/total);
+	int count = ceil(N/S);
 	int start = (rank-1) * (count * N);
 	if((start + N * count) > N * N) count = size - start;
 
