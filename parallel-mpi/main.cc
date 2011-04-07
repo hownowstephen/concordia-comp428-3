@@ -39,6 +39,8 @@ double getClock()
 }
 
 
+int blockOwner(int k){
+
 /**
  * FloydsAlgorithm (parallelized)
  * Performs a test of an adjacency matrix (2-dimensional represented as single dimension)
@@ -58,15 +60,17 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 	int rowk[N];
 
 	for (k=0;k<N;k++) {
+
+		int owner = (int) floor(k/count);
 		// Check if k is owned by this process, if so, calculate the row
-		if (k >= start && k < start+count) {
+		if (rank == owner) {
 			k_here = k - start;
 			for(j=0;j<N;j++)
 				rowk[j]=data[k_here*N + j];
 		}
 
 		//MPI_Bcast(&k, 1, MPI_INT, 0, MPI_Comm_World);
-		MPI_Bcast(rowk,N,MPI_INT,rank,MPI_COMM_WORLD);
+		MPI_Bcast(rowk,N,MPI_INT,owner,MPI_COMM_WORLD);
 
 		for(i=start;i<start+count;i++){
 			for(j=0;j<N;j++){
