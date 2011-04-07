@@ -21,8 +21,7 @@ using namespace std;
 char name[MPI_MAX_PROCESSOR_NAME];
 
 // Define a constant for infinity
-#define INFINITY 999999
-#define SERVER 0
+#define FLOYDINF 999999
 
 /**
  * GetClock
@@ -71,7 +70,7 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 					data[ij] = 0;
 				}else{
 					// Use an arbitrarily large number to test against
-					if(data[ij] == 0) data[ij] = INFINITY;
+					if(data[ij] == 0) data[ij] = FLOYDINF;
 					// If our data is smaller, replace it and set the output to be the current path length
 					if(data[ik]+data[kj]< data[ij]){
 						data[ij] = data[ik]+data[kj];
@@ -168,7 +167,7 @@ int main(int argc, char * argv[]){
 
 	cout << "Rank " << rank << " checking in" << endl;
 
-	if (rank == SERVER)
+	if (rank == 0)
 	{  Server(size); }
 	else
 	{  Slave(rank); }
