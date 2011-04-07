@@ -132,8 +132,8 @@ void Slave(int rank){
 	MPI_Bcast (&data, N*N, MPI_INT, 0, MPI_COMM_WORLD);
 
 	// Receive directives for processing
-	MPI_Recv (&start, 1, MPI_INT, rank, 0, MPI_COMM_WORLD,&status);
-	MPI_Recv (&count, 1, MPI_INT, rank, 1, MPI_COMM_WORLD,&status);
+	MPI_Recv (&start, 1, MPI_INT, 0, 0, MPI_COMM_WORLD,&status);
+	MPI_Recv (&count, 1, MPI_INT, 0, 1, MPI_COMM_WORLD,&status);
 
 	FloydsAlgorithm(data,N,start,count);
 
