@@ -92,7 +92,7 @@ void Server(int size,char * file){
 	FILE *I_in;
 	// Load in the Adjacency matrix to test
 	ifstream M_in(file, ios::in);
-	int N,tmp;
+	int N,tmp,index;
 	M_in >> N;
 
 	// Generate the dataset
@@ -103,7 +103,6 @@ void Server(int size,char * file){
 			   data[y*N + x] = tmp;
 		}
 	// Finally, print the result
-		int index;
 		for(int i=0;i<N;i++){
 			for (int j=0;j<N;j++){
 				index = i*N+j;
@@ -133,7 +132,6 @@ void Server(int size,char * file){
 		}
 	}
 	// Finally, print the result
-	int index;
 	for(int i=0;i<N;i++){
 		for (int j=0;j<N;j++){
 			index = i*N+j;
