@@ -18,6 +18,9 @@
 #include <sys/time.h>
 using namespace std;
 
+// Define a smaller infinity constant
+#define SMINF 999999
+
 char name[MPI_MAX_PROCESSOR_NAME];
 
 
@@ -45,10 +48,10 @@ double getClock()
  * @param int N Size of a single dimension of the matrix
  * @param int i The row to test
  */
-void FloydsAlgorithm(int rank, sint *data, int N, int start, int count){
+void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 
 	cout << "Performing floyds algorithm for matrix of size " << N << endl;
-	int k,i,j;
+	int k,i,j,k_here;
 	int ij,ik;
 
 	int rowk[N];
@@ -57,7 +60,7 @@ void FloydsAlgorithm(int rank, sint *data, int N, int start, int count){
 		// Check if k is owned by this process, if so, calculate the row
 		if (k >= start && k < start+count) {
 			k_here = k - start;
-			for(j=0;j<n;j++)
+			for(j=0;j<N;j++)
 				rowk[j]=a[k_here][j];
 		}
 
@@ -69,9 +72,8 @@ void FloydsAlgorithm(int rank, sint *data, int N, int start, int count){
 
 				ij = i * N + j;
 				ik = i * N + k;
-				kj = k * N + j;
 
-				if(data[ij] == 0) data[ij] = INFINITY;
+				if(data[ij] == 0) data[ij] = SMINF;
 				if(i == j) data[ij] = 0;
 				data[ij]= min(data[ij], data[ik]+rowk[j]);
 			}
@@ -83,7 +85,7 @@ void FloydsAlgorithm(int rank, sint *data, int N, int start, int count){
 		for(int i=0;i<N;i++){
 			for (int j=0;j<N;j++){
 				index = i*N+j;
-				if(data[index] == FLOYDINF)
+				if(data[index] == SMINF)
 					cout << 0 << ' ';
 				else
 					cout << data[index] << ' ';
