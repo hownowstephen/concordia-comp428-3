@@ -110,10 +110,12 @@ void Server(int size){
 
 	FloydsAlgorithm(0,data,N,0,count);
 
+	cout << "Combining responses" << endl;
 	int tmp[N*N];
-	for(int p=1;p<size;p++){
+	for(int p=1;p<size;++p){
 		MPI_Bcast(tmp, N*N, MPI_INT, p, MPI_COMM_WORLD);
-		for(int v=0;v<N*N;v++){
+		cout << "Got response from " << p << endl;
+		for(int v=0;v<N*N;++v){
 			data[v] = data[v] + tmp[v];
 		}
 	}
