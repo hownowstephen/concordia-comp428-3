@@ -113,7 +113,7 @@ void Server(int size){
 
 	cout << "Combining responses" << endl;
 	for(int p=1;p<size;p++){
-		int tmp[total];
+		int * tmp;
 		MPI_Recv(tmp, total, MPI_INT, p, 0, MPI_COMM_WORLD,status);
 		cout << "Got response from " << p << endl;
 		for(int v=0;v<total;v++){
