@@ -120,12 +120,12 @@ void Server(int size){
 	FloydsAlgorithm(0,data,N,0,count);
 
 	cout << "Combining responses" << endl;
-	int tmp[total];
+	int t[total];
 	for(int p=1;p<size;p++){
 		MPI_Recv(&tmp, total, MPI_INT, p, 0, MPI_COMM_WORLD,&status);
 		cout << "Got response from " << p << endl;
 		for(int v=0;v<total;v++){
-			data[v] = data[v] + tmp[v];
+			data[v] = max(data[v],t[v]);
 		}
 	}
 
