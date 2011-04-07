@@ -81,6 +81,15 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 			}
 		}
 	}
+	// Populate the output
+	int c = 0;
+	for(int i=start;i<start+count;i++){
+		for(int j=0;j<N;j++){
+			out[c] = data[i*j];
+			cout << out[c] << " ";
+		}
+		cout << endl;
+	}
 }
 
 void Server(int size){
@@ -103,32 +112,24 @@ void Server(int size){
 	int count = ceil(N/size);
 	int start = N;
 
-	// Send directives to each processor of what to process
-	for (int dest = 1; dest < size; ++dest){
-		MPI_Send (&start, 1, MPI_INT, dest, 0, MPI_COMM_WORLD);
-		MPI_Send (&count, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
-		start += count;
-		// Handle the last processor potentially having less rows
-		if(start + count > N) count = N - start;
-
-	}
-
 	FloydsAlgorithm(data,N,0,ceil(N/size));
 }
 // Slave process - receives a request, performs floyd's algorithm, and returns a subset of the data
-void Slave(int rank){
-	int N,start,count;
+void Slave(int rank,int total){
+	int N;
 	MPI_Status status;
 
 	// Receive broadcast of N (the width/height of the matrix)
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 	int * data = new int[N*N];
 	// Receive the matrix
-	MPI_Bcast (&data, N*N, MPI_INT, 0, MPI_COMM_WORLD);
+	MPI_Bcast (&data, size, MPI_INT, 0, MPI_COMM_WORLD);
 
-	// Receive directives for processing
-	MPI_Recv (&start, 1, MPI_INT, 0, 0, MPI_COMM_WORLD,&status);
-	MPI_Recv (&count, 1, MPI_INT, 0, 1, MPI_COMM_WORLD,&status);
+	// Calculate my start and count
+	int size = N * N;
+	int count = ceil(N/total);
+	int start = (rank-1) * (count * N);
+	if((start + N * count) > N * N) count = size - start;
 
 	cout << "Process " << rank << " performing floyd's algo for " << count << " from " << start << endl;
 	FloydsAlgorithm(data,N,start,count);
@@ -137,16 +138,8 @@ void Slave(int rank){
 	int total = N * count;
 	// Output
 	int * out = new int[total];
-	// Populate the output
-	int c = 0;
-	for(int i=start;i<start+count;i++){
-		for(int j=0;j<N;j++){
-			out[c] = data[i*j];
-			cout << out[c] << " ";
-		}
-		cout << endl;
-	}
-	MPI_Send(&out, total, MPI_INT, 0, rank, MPI_COMM_WORLD);
+
+	// MPI_Send(&out, total, MPI_INT, 0, rank, MPI_COMM_WORLD);
 }
 
 /**
@@ -166,6 +159,6 @@ int main(int argc, char * argv[]){
 	if (rank == 0)
 	{  Server(size); }
 	else
-	{  Slave(rank); }
+	{  Slave(rank,size); }
 	MPI_Finalize();
 }
