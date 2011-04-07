@@ -51,6 +51,7 @@ double getClock()
 void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 
 	cout << "Performing floyds algorithm for matrix of size " << N << endl;
+	cout << "Start " << start << " count " << count << endl;
 	int k,i,j,k_here;
 	int ij,ik;
 
@@ -135,8 +136,6 @@ void Slave(int rank,int S){
 	int count = (int) ceil(num/S);
 	int start = rank * count;
 	if((num * start) + (num * count) > size) count = N - start;
-
-	cout << "Process " << rank << "(" << start << "," << count << ")" << endl;
 
 	FloydsAlgorithm(rank,data,num,start,count);
 
