@@ -114,7 +114,7 @@ void Server(int size){
 	cout << "Combining responses" << endl;
 	int tmp[total];
 	for(int p=1;p<size;p++){
-		MPI_Recv(&tmp, total, MPI_INT, p, 0, MPI_COMM_WORLD,status);
+		MPI_Recv(&tmp, total, MPI_INT, p, 0, MPI_COMM_WORLD,&status);
 		cout << "Got response from " << p << endl;
 		for(int v=0;v<total;v++){
 			data[v] = data[v] + tmp[v];
