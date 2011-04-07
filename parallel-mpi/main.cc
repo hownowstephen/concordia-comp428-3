@@ -107,15 +107,16 @@ void Server(int size){
 
 	int count = (int) ceil(N/size);
 	int start = N;
+	int total = N*N;
 
 	FloydsAlgorithm(0,data,N,0,count);
 
 	cout << "Combining responses" << endl;
-	int tmp[N*N];
 	for(int p=1;p<size;p++){
-		MPI_Recv(tmp, N*N, MPI_INT, p, 0, MPI_COMM_WORLD,status);
+		int tmp[total];
+		MPI_Recv(tmp, total, MPI_INT, p, 0, MPI_COMM_WORLD,status);
 		cout << "Got response from " << p << endl;
-		for(int v=0;v<N*N;v++){
+		for(int v=0;v<total;v++){
 			data[v] = data[v] + tmp[v];
 		}
 	}
