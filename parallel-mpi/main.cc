@@ -148,7 +148,7 @@ void Slave(int rank){
 		}
 		cout << endl;
 	}
-	MPI_Send(&out, total, MPI_INT, SERVER, rank, MPI_COMM_WORLD);
+	MPI_Send(&out, total, MPI_INT, 0, rank, MPI_COMM_WORLD);
 }
 
 /**
