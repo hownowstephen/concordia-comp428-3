@@ -39,8 +39,6 @@ double getClock()
 }
 
 
-int blockOwner(int k){
-
 /**
  * FloydsAlgorithm (parallelized)
  * Performs a test of an adjacency matrix (2-dimensional represented as single dimension)
