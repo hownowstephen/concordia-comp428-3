@@ -98,7 +98,7 @@ void Server(int size){
 	int count = (int) ceil(N/size);
 	int start = N;
 
-	FloydsAlgorithm(data,N*N);
+	FloydsAlgorithm(data,N*N,0,count);
 }
 // Slave process - receives a request, performs floyd's algorithm, and returns a subset of the data
 void Slave(int rank,int S){
