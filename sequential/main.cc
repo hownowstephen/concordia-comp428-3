@@ -16,7 +16,7 @@
 using namespace std;
 
 // Define a constant for infinity
-#define INFINITY 99999
+#define INFINITY 999999
 
 /**
  * GetClock

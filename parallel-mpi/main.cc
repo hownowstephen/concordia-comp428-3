@@ -20,7 +20,8 @@ using namespace std;
 char name[MPI_MAX_PROCESSOR_NAME];
 
 // Define a constant for infinity
-#define INFINITY 99999
+#define INFINITY 999999
+#define SERVER 0
 
 /**
  * GetClock
@@ -45,9 +46,9 @@ double getClock()
  * @param int N Size of a single dimension of the matrix
  * @param int i The row to test
  */
-void FloydsAlgorithm(int *data, int N, int i){
+void FloydsAlgorithm(int *data, int N, int start, int count){
 
-	int k,j;
+	int k,j,i;
 	int ij,ik,kj;
 
 	// Output will be same size as data
@@ -57,22 +58,25 @@ void FloydsAlgorithm(int *data, int N, int i){
 	for(k=0; k<N; k++){
 		// Test columns
 		for (j=0; j<N; j++){
-			// Resolve some indices
-			ij = i * N + j;
-			ik = i * N + k;
-			kj = k * N + j;
+			// Process the set of columns indicated
+			for(i=start;i<start+count;i++){
+				// Resolve some indices
+				ij = i * N + j;
+				ik = i * N + k;
+				kj = k * N + j;
 
-			// If i == j, the nodes are the same, so the distance is zero
-			if(i==j){
-				data[ij] = 0;
-			}else{
-				// Use an arbitrarily large number to test against
-				if(data[ij] == 0) data[ij] = INFINITY;
-				// If our data is smaller, replace it and set the output to be the current path length
-				if(data[ik]+data[kj]< data[ij]){
-					data[ij] = data[ik]+data[kj];
-					// Only need index j
-					out[j] = k;
+				// If i == j, the nodes are the same, so the distance is zero
+				if(i==j){
+					data[ij] = 0;
+				}else{
+					// Use an arbitrarily large number to test against
+					if(data[ij] == 0) data[ij] = INFINITY;
+					// If our data is smaller, replace it and set the output to be the current path length
+					if(data[ik]+data[kj]< data[ij]){
+						data[ij] = data[ik]+data[kj];
+						// Only need index j
+						out[j] = k;
+					}
 				}
 			}
 		}
@@ -80,14 +84,68 @@ void FloydsAlgorithm(int *data, int N, int i){
 }
 
 // Stub for server process
-void Server(int size, int rank){
+void Server(int size){
 	// Perform dispatch of all requests
 	// Need to: Broadcast data, send each process a start/count pair for their requirements
-	Slave(rank); // Server partakes as a slave as well
+
+	int N = 4;
+	/** @var sample A sample adjacency matrix */
+	int data[16]= { 0, 1, 0, 0,
+					0, 0, 1, 1,
+					0, 0, 0, 0,
+					1, 0, 1, 0
+				  };
+
+	// Broadcast out the matrix width/height
+	MPI_Bcast (N, 1, MPI_INT, 0, MPI_COMM_WORLD);
+	// Broadcast out the matrix contents
+	MPI_Bcast (data, N*N, MPI_INT, 0, MPI_COMM_WORLD);
+
+	int count = ceil(N/size);
+	int start = N;
+
+	// Send directives to each processor of what to process
+	for (dest = 1; dest < size; ++dest){
+		MPI_Send (&start, 1, MPI_INT, dest, 0, MPI_COMM_WORLD);
+		MPI_Send (&count, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
+		start += count;
+		// Handle the last processor potentially having less rows
+		if(start + count > N) count = N - start;
+
+	}
+
+	FloydsAlgorithm(data,N,0,ceil(N/size));
 }
-// Stub for slave process
+// Slave process - receives a request, performs floyd's algorithm, and returns a subset of the data
 void Slave(int rank){
-	// Handles all received orders
+	int N,start,count;
+
+	// Receive broadcast of N (the width/height of the matrix)
+	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
+	int * data = new int[N*N];
+	// Receive the matrix
+	MPI_Bcast (&data, N, MPI_INT, 0, MPI_COMM_WORLD);
+
+	// Receive directives for processing
+	MPI_Recv (&start, 1, MPI_INT, rank, 0, MPI_COMM_WORLD);
+	MPI_Recv (&count, 1, MPI_INT, rank, 1, MPI_COMM_WORLD);
+
+	FloydsAlgorithm(data,N,start,count);
+
+	// Total number of individual items processed
+	int total = N * count;
+	// Output
+	int * out = new int[total];
+	// Populate the output
+	int c = 0;
+	for(int i=start;i<start+count;i++){
+		for(int j=0;j<N;j++){
+			out[c] = data[i*j];
+			cout << out[c] << " ";
+		}
+		cout << endl;
+	}
+	MPI_Send(&out, total, SERVER, rank, MPI_COMM_WORLD);
 }
 
 /**
@@ -104,8 +162,8 @@ int main(void){
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Get_processor_name(name, &len);
 
-	if (rank == 0)
-	{  Server(size,rank); }
+	if (rank == SERVER)
+	{  Server(size); }
 	else
 	{  Slave(rank); }
 	MPI_Finalize();
