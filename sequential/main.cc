@@ -11,6 +11,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <sys/time.h>
 using namespace std;
@@ -82,15 +83,23 @@ void FloydsAlgorithm(int *data, int N){
  *		1 2 1 0
  */
 int main(void){
-	int N = 4;
-	/** @var sample A sample adjacency matrix */
-	int data[16]= { 0, 1, 0, 0,
-					0, 0, 1, 1,
-					0, 0, 0, 0,
-					1, 0, 1, 0,
-				  };
+
+	double startTime = getClock();
+
+	FILE *I_in;
+	// Load the mask
+	ifstream M_in("Adjacency.mtx", ios::in);
+	int N,tmp;
+	M_in >> N;
+
+	int data[N*N];
+	for (int y = 0; y < N; y++)
+		for (int x = 0; x < N; x++){
+			   M_in >> tmp;
+			   data[y*N + x] = tmp;
+		}
 	// Perform the actual calculation (simple is passed by reference, so no return)
-	FloydsAlgorithm(data,4);
+	FloydsAlgorithm(data,N);
 
 	// Print out the new matrix with the returned results
 	int index;
@@ -105,6 +114,8 @@ int main(void){
 		}
 		cout << endl;
 	}
+
+	cout << "Time: "<< getClock() - startTime << endl;
 
 	return 0;
 }
