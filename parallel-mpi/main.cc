@@ -85,14 +85,14 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 
 	if(rank != 0){
 		cout << "sending final result from " << rank << endl;
-		MPI_Bcast(data,N*N,MPI_INT,rank,MPI_COMM_WORLD);
+		MPI_Send(data,N*N,MPI_INT,0,rank,MPI_COMM_WORLD);
 	}
 }
 
 void Server(int size){
 	// Perform dispatch of all requests
 	// Need to: Broadcast data, send each process a start/count pair for their requirements
-
+	MPI_Status *status;
 	int N = 4;
 	/** @var sample A sample adjacency matrix */
 	int data[16]= { 0, 1, 0, 0,
@@ -113,7 +113,7 @@ void Server(int size){
 	cout << "Combining responses" << endl;
 	int tmp[N*N];
 	for(int p=1;p<size;++p){
-		MPI_Bcast(tmp, N*N, MPI_INT, p, MPI_COMM_WORLD);
+		MPI_Recv(tmp, N*N, MPI_INT, p, p, MPI_COMM_WORLD,status);
 		cout << "Got response from " << p << endl;
 		for(int v=0;v<N*N;++v){
 			data[v] = data[v] + tmp[v];
