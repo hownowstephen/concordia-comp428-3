@@ -55,7 +55,7 @@ void FloydsAlgorithm(int *data, int N){
 	// Maximum path length is N so we iterate N times
 	for(k=0; k<N; k++){
 		// Test rows
-		for(i=0; i<N; i++){
+		for(i=start; i<start+count; i++){
 			// Test columns
 			for (j=0; j<N; j++){
 				// Resolve some indices
@@ -122,13 +122,15 @@ void Slave(int rank,int S){
 
 	cout << "Process " << rank << "(" << start << "," << count << ")" << endl;
 
-	FloydsAlgorithm(data,num);
-	exit;
+	FloydsAlgorithm(data,num,start,count);
 	int index;
 	for(int i=0;i<N;i++){
 		for (int j=0;j<N;j++){
 			index = i*N+j;
-			cout << data[index] << ' ';
+			if(data[index] == FLOYDINF)
+				cout << 0 << ' ';
+			else
+				cout << data[index] << ' ';
 		}
 		cout << endl;
 	}
