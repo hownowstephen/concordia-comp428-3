@@ -104,16 +104,15 @@ void Server(int size){
 					0, 0, 0, 0,
 					1, 0, 1, 0
 				  };
-
 	// Broadcast out the matrix width/height
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 	// Broadcast out the matrix contents
 	MPI_Bcast (data, N*N, MPI_INT, 0, MPI_COMM_WORLD);
 
-	int count = ceil(N/size);
+	int count = (int) ceil(N/size);
 	int start = N;
 
-	FloydsAlgorithm(data,N,0,ceil(N/size));
+	FloydsAlgorithm(data,N*N,0,count);
 }
 // Slave process - receives a request, performs floyd's algorithm, and returns a subset of the data
 void Slave(int rank,int S){
