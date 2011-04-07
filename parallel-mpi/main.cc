@@ -93,13 +93,20 @@ void Server(int size){
 	// Perform dispatch of all requests
 	// Need to: Broadcast data, send each process a start/count pair for their requirements
 	MPI_Status status;
-	int N = 4;
-	/** @var sample A sample adjacency matrix */
-	int data[16]= { 0, 1, 0, 0,
-					0, 0, 1, 1,
-					0, 0, 0, 0,
-					1, 0, 1, 0,
-				  };
+
+	FILE *I_in;
+	// Load the mask
+	ifstream M_in("Adjacency.mtx", ios::in);
+	int N,tmp;
+	M_in >> N;
+
+	int data[N*N];
+	for (int y = 0; y < N; y++)
+		for (int x = 0; x < N; x++){
+			   M_in >> tmp;
+			   data[y*N + x] = tmp;
+		}
+
 	// Broadcast out the matrix width/height
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 	// Broadcast out the matrix contents
