@@ -121,12 +121,14 @@ void Slave(int rank,int total){
 
 	// Receive broadcast of N (the width/height of the matrix)
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
-	int * data = new int[N*N];
+
+	int size = N * N;
+	int * data = new int[size];
+
 	// Receive the matrix
 	MPI_Bcast (&data, size, MPI_INT, 0, MPI_COMM_WORLD);
 
-	// Calculate my start and count
-	int size = N * N;
+	// Calculate start and count
 	int count = ceil(N/total);
 	int start = (rank-1) * (count * N);
 	if((start + N * count) > N * N) count = size - start;
