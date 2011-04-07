@@ -102,7 +102,7 @@ void Server(int size){
 	// Broadcast out the matrix width/height
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 	// Broadcast out the matrix contents
-	MPI_Bcast (data, N*N, MPI_INT, 0, MPI_COMM_WORLD);
+	MPI_Bcast (data, N*N, MPI_INT, 1, MPI_COMM_WORLD);
 
 	int count = ceil(N/size);
 	int start = N;
@@ -128,7 +128,7 @@ void Slave(int rank){
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 	int * data = new int[N*N];
 	// Receive the matrix
-	MPI_Bcast (&data, N, MPI_INT, 0, MPI_COMM_WORLD);
+	MPI_Bcast (&data, N*N, MPI_INT, 1, MPI_COMM_WORLD);
 
 	// Receive directives for processing
 	MPI_Recv (&start, 1, MPI_INT, rank, 0, MPI_COMM_WORLD,&status);
