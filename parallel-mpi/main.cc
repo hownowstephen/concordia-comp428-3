@@ -59,7 +59,7 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 
 	for (k=0;k<N;k++) {
 
-		int owner = (int) floor(k/count);
+		int owner = (int) ceil(k/count);
 		// Check if k is owned by this process, if so, calculate the row
 		if (rank == owner) {
 			k_here = k;// - start;
