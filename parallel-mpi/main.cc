@@ -53,9 +53,9 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 	int ij,ik,kj;
 
 	// Maximum path length is N so we iterate N times
-	for(k=0; k<N; k++){
+	for(k=start; k<start+count; k++){
 		// Test rows
-		for(i=start; i<start+count; i++){
+		for(i=0; i<N; i++){
 			// Test columns
 			for (j=0; j<N; j++){
 				// Resolve some indices
