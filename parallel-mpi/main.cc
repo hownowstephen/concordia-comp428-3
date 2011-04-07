@@ -77,6 +77,19 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 			}
 		}
 	}
+	if(start == 0){
+		int index;
+		for(int i=0;i<N;i++){
+			for (int j=0;j<N;j++){
+				index = i*N+j;
+				if(data[index] == FLOYDINF)
+					cout << 0 << ' ';
+				else
+					cout << data[index] << ' ';
+			}
+			cout << endl;
+		}
+	}
 }
 
 void Server(int size){
@@ -98,7 +111,7 @@ void Server(int size){
 	int count = (int) ceil(N/size);
 	int start = N;
 
-	FloydsAlgorithm(data,N*N,0,count);
+	FloydsAlgorithm(data,N,0,count);
 }
 // Slave process - receives a request, performs floyd's algorithm, and returns a subset of the data
 void Slave(int rank,int S){
@@ -123,17 +136,6 @@ void Slave(int rank,int S){
 	cout << "Process " << rank << "(" << start << "," << count << ")" << endl;
 
 	FloydsAlgorithm(data,num,start,count);
-	int index;
-	for(int i=0;i<N;i++){
-		for (int j=0;j<N;j++){
-			index = i*N+j;
-			if(data[index] == FLOYDINF)
-				cout << 0 << ' ';
-			else
-				cout << data[index] << ' ';
-		}
-		cout << endl;
-	}
 
 	// Total number of individual items processed
 	int total = num * count;
