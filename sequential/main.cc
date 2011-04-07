@@ -82,9 +82,18 @@ void FloydsAlgorithm(int *data, int N){
  *		0 0 0 0
  *		1 2 1 0
  */
-int main(void){
+int main(int argc, char * argv[]){
 
 	double startTime = getClock();
+
+	char * file;
+
+	if(argc > 1){
+		file = argv[1];
+	}else{
+		cout << "Please supply a filename" << endl;
+		return 1;
+	}
 
 	FILE *I_in;
 	// Load the mask

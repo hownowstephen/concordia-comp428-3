@@ -47,7 +47,8 @@ double getClock()
  * @param int rank The rank of the current process
  * @param int* data A square adjacency matrix
  * @param int N Size of a single dimension of the matrix
- * @param int i The row to test
+ * @param int start The start of the block
+ * @param int end The end of the block
  */
 void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 
@@ -81,24 +82,20 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 			}
 		}
 	}
-
-	if(rank != 0){
-		cout << "sending final result from " << rank << endl;
-		MPI_Send(data,N*N,MPI_INT,0,0,MPI_COMM_WORLD);
-	}
 }
 
-void Server(int size){
+void Server(int size,char * file){
 	// Perform dispatch of all requests
 	// Need to: Broadcast data, send each process a start/count pair for their requirements
 	MPI_Status status;
 
 	FILE *I_in;
-	// Load the mask
-	ifstream M_in("../Adjacency.mtx", ios::in);
+	// Load in the Adjacency matrix to test
+	ifstream M_in(file, ios::in);
 	int N,tmp;
 	M_in >> N;
 
+	// Generate the dataset
 	int data[N*N];
 	for (int y = 0; y < N; y++)
 		for (int x = 0; x < N; x++){
@@ -124,7 +121,7 @@ void Server(int size){
 			data[v] = max(data[v],t[v]);
 		}
 	}
-
+	// Finally, print the result
 	int index;
 	for(int i=0;i<N;i++){
 		for (int j=0;j<N;j++){
@@ -157,14 +154,11 @@ void Slave(int rank,int S){
 	int start = rank * count;
 	if((num * start) + (num * count) > size) count = N - start;
 
+	// Perform my transformations
 	FloydsAlgorithm(rank,data,num,start,count);
 
-	// Total number of individual items processed
-	int total = num * count;
-	// Output
-	int * out = new int[total];
-
-	// MPI_Send(&out, total, MPI_INT, 0, rank, MPI_COMM_WORLD);
+	// Send my data
+	MPI_Send(data,size,MPI_INT,0,0,MPI_COMM_WORLD);
 }
 
 /**
@@ -181,10 +175,19 @@ int main(int argc, char * argv[]){
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Get_processor_name(name, &len);
 
+	// Take a filename as a param
+	if(argc > 1){
+		char * file = argv[1];
+	}else{
+		cout << "Please supply a filename" << endl;
+		MPI_Finalize();
+		return 1;
+	}
+
 	if (rank == 0)
 	{
 		double startTime = getClock();
-		Server(size);
+		Server(size,file);
 		cout << "Time: "<< getClock() - startTime << endl;
 	}
 	else
