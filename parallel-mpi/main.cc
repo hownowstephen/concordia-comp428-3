@@ -67,7 +67,7 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 				rowk[j]=data[k_here*N + j];
 		}
 
-		MPI_Bcast(&k, 1, MPI_INT, owner, MPI_Comm_World);
+		MPI_Bcast(&k, 1, MPI_INT, owner, MPI_COMM_WORLD);
 		MPI_Bcast(rowk,N,MPI_INT,owner,MPI_COMM_WORLD);
 
 		for(i=start;i<start+count;i++){
