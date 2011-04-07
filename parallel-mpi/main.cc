@@ -83,7 +83,10 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 		}
 	}
 
-	MPI_Bcast(data,N*N,MPI_INT,rank,MPI_COMM_WORLD);
+	if(rank != 0){
+		cout << "sending final result from " << rank << endl;
+		MPI_Bcast(data,N*N,MPI_INT,rank,MPI_COMM_WORLD);
+	}
 }
 
 void Server(int size){
