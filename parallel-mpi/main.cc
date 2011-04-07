@@ -12,6 +12,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <mpi.h>
 #include <math.h>
