@@ -76,9 +76,12 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 				ij = i * N + j;
 				ik = i * N + k;
 
-				if(data[ij] == 0) data[ij] = SMINF;
-				if(i == j) data[ij] = 0;
-				data[ij]= min(data[ij], data[ik]+rowk[j]);
+				if(i == j){
+					data[ij] = 0;
+				}else{
+					if(data[ij] == 0) data[ij] = SMINF;
+					data[ij]= min(data[ij], data[ik]+rowk[j]);
+				}
 			}
 		}
 	}
