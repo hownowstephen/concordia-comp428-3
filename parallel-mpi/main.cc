@@ -128,9 +128,11 @@ void Slave(int rank,int S){
 	// Receive the matrix
 	MPI_Bcast (&data, size, MPI_INT, 0, MPI_COMM_WORLD);
 
+	cout << "Size: " << N << "^2: " << size << endl;
+
 	// Calculate start and count
-	int count = ceil(N/S);
-	int start = (rank-1) * (count * N);
+	int count = (int) ceil(N/S);
+	int start = (rank) * (N * count);
 	if((start + N * count) > N * N) count = size - start;
 
 	cout << "Process " << rank << " performing floyd's algo for " << count << " from " << start << endl;
