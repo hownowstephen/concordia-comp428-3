@@ -46,7 +46,7 @@ double getClock()
  * @param int N Size of a single dimension of the matrix
  * @param int i The row to test
  */
-void FloydsAlgorithm(int *data, int N){
+void FloydsAlgorithm(int *data, int N, int start, int count){
 
 	cout << "Performing floyds algorithm for matrix of size " << N << endl;
 	int k,i,j;
