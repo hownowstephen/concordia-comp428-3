@@ -81,16 +81,17 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 			}
 		}
 	}
-	cout << "Done processing algorithm" << endl;
 	// Populate the output
 	int c = 0;
 	for(int i=start;i<start+count;i++){
 		for(int j=0;j<N;j++){
-			out[c] = data[i*j];
+			out[c] = data[i*N + j];
 			cout << out[c] << " ";
+			c++;
 		}
 		cout << endl;
 	}
+	cout << endl;
 }
 
 void Server(int size){
@@ -129,13 +130,12 @@ void Slave(int rank,int S){
 	MPI_Bcast (&data, size, MPI_INT, 0, MPI_COMM_WORLD);
 
 	int num = sqrt(size);
-	cout << "Size: " << num << "^2: " << size << endl;
+
 	// Calculate start and count
 	int count = (int) ceil(num/S);
 	int start = rank * count;
 	if((num * start) + (num * count) > size) count = N - start;
 
-	cout << "Process " << rank << " performing floyd's algo for " << count << " from " << start << endl;
 	FloydsAlgorithm(data,num,start,count);
 
 	// Total number of individual items processed
