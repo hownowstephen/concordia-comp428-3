@@ -83,7 +83,6 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 	}
 }
 
-// Stub for server process
 void Server(int size){
 	// Perform dispatch of all requests
 	// Need to: Broadcast data, send each process a start/count pair for their requirements
@@ -96,7 +95,7 @@ void Server(int size){
 					1, 0, 1, 0
 				  };
 
-	cout << "Initializing Floyd's Algorithm";
+	cout << "Server process" << endl;
 
 	// Broadcast out the matrix width/height
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -122,6 +121,8 @@ void Server(int size){
 void Slave(int rank){
 	int N,start,count;
 	MPI_Status status;
+
+	cout << "Slave process: " << rank << endl;
 
 	// Receive broadcast of N (the width/height of the matrix)
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -164,8 +165,6 @@ int main(int argc, char * argv[]){
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Get_processor_name(name, &len);
-
-	cout << "Rank " << rank << " checking in" << endl;
 
 	if (rank == 0)
 	{  Server(size); }
