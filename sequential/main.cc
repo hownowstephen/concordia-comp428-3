@@ -97,7 +97,7 @@ int main(int argc, char * argv[]){
 
 	FILE *I_in;
 	// Load the mask
-	ifstream M_in("../Adjacency.mtx", ios::in);
+	ifstream M_in(file, ios::in);
 	int N,tmp;
 	M_in >> N;
 
