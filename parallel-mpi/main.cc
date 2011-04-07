@@ -67,7 +67,7 @@ void FloydsAlgorithm(int *data, int N){
 					data[ij] = 0;
 				}else{
 					// Use an arbitrarily large number to test against
-					if(data[ij] == 0) data[ij] = INFINITY;
+					if(data[ij] == 0) data[ij] = FLOYDINF;
 					// If our data is smaller, replace it and set the output to be the current path length
 					if(data[ik]+data[kj]< data[ij]){
 						data[ij] = data[ik]+data[kj];
@@ -108,7 +108,7 @@ void Slave(int rank,int S){
 	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
 	int size = N * N;
-	int * data = new int[size];
+	int data[size];
 
 	// Receive the matrix
 	MPI_Bcast (&data, size, MPI_INT, 0, MPI_COMM_WORLD);
@@ -121,6 +121,7 @@ void Slave(int rank,int S){
 		}
 		cout << endl;
 	}
+	exit;
 
 	int num = sqrt(size);
 
