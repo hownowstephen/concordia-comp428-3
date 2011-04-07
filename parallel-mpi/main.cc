@@ -81,6 +81,7 @@ void FloydsAlgorithm(int *data, int N, int start, int count){
 			}
 		}
 	}
+	cout << "Done processing algorithm" << endl;
 	// Populate the output
 	int c = 0;
 	for(int i=start;i<start+count;i++){
