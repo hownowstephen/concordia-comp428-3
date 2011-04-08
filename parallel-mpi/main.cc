@@ -69,12 +69,12 @@ void FloydsAlgorithm(int rank, int *data, int N, int start, int count){
 		MPI_Bcast(&k, 1, MPI_INT, owner, MPI_COMM_WORLD);
 		MPI_Bcast(rowk,N,MPI_INT,owner,MPI_COMM_WORLD);
 		cout << "Caused by rowk" << endl;
-		for(i=start;i<start+(N*count);i++){
+		for(i=start;i<start+count;i++){
 			for(j=0;j<N;j++){
 
 				ij = i * N + j;
 				ik = i * N + k;
-				cout << "inloop" << endl;
+
 				if(i == j){
 					data[ij] = 0;
 				}else{
